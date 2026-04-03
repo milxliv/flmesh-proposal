@@ -1,0 +1,26 @@
+[
+  {
+    "title": "Solar Repeater — Rooftop Install",
+    "description": "Heltec V3 in a weatherproof enclosure with 3W solar panel. Running 24/7 since January.",
+    "image": "images/builds/solar-repeater.jpg",
+    "tag": "Repeater",
+    "location": "Tampa Bay",
+    "author": "Json_18"
+  },
+  {
+    "title": "EDC Go-Kit",
+    "description": "T-Beam Supreme in a Pelican micro case. GPS + BLE + 3000mAh battery. Fits in a cargo pocket.",
+    "image": "images/builds/edc-gokit.jpg",
+    "tag": "Portable",
+    "location": "SW Florida",
+    "author": "Beanfield"
+  },
+  {
+    "title": "3D-Printed MQTT Gateway",
+    "description": "RAK WisBlock in a custom PETG enclosure. Ethernet-connected gateway feeding mesh data to MQTT.",
+    "image": "images/builds/mqtt-gateway.jpg",
+    "tag": "Gateway",
+    "location": "Central FL",
+    "author": "PockyBum522"
+  }
+]

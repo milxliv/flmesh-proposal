@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Florida Mesh — a community-driven Meshtastic mesh network connecting nodes across Florida using off-grid LoRa radio.">
+  <title>Florida Mesh — Are You Meshing With Us?</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="images/logo-sm.png" type="image/png">
+</head>
+<body>
+
+  <!-- ======== NAVIGATION ======== -->
+  <nav class="site-nav" role="navigation" aria-label="Main navigation">
+    <div class="nav-inner">
+      <a href="/" class="nav-brand" aria-label="Florida Mesh Home">
+        <img src="images/logo-sm.png" alt="Florida Mesh logo" width="36" height="36">
+        Florida <span>Mesh</span>
+      </a>
+
+      <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+
+      <ul class="nav-links" id="nav-links" role="list">
+        <li><a href="#about">About</a></li>
+        <li><a href="https://areyoumeshingwith.us/docs/meshtastic-docs/">Meshtastic</a></li>
+        <li><a href="https://areyoumeshingwith.us/docs/meshcore-docs/">MeshCore</a></li>
+        <li><a href="https://areyoumeshingwith.us/blog/">Blog</a></li>
+        <li><a href="#builds">Builds</a></li>
+        <li><a href="https://map.areyoumeshingwith.us" target="_blank" rel="noopener">Map</a></li>
+        <li><a href="https://malla.areyoumeshingwith.us" target="_blank" rel="noopener">Telemetry</a></li>
+        <li><a href="#get-started" class="nav-cta">Get Started</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ======== HERO ======== -->
+  <section class="hero" id="home">
+    <div class="hero-mesh" aria-hidden="true"></div>
+    <div class="hero-content">
+      <div class="hero-badge">Network Active — Florida Statewide</div>
+      <h1>Are You <em>Meshing</em> With&nbsp;Us?</h1>
+      <p class="hero-sub">
+        Florida Mesh is a community-driven, off-grid radio network built on Meshtastic.
+        No cell towers. No internet required. Just LoRa radios linking neighbors
+        across the state.
+      </p>
+      <div class="hero-actions">
+        <a href="#get-started" class="btn btn-primary">Get Started</a>
+        <a href="https://map.areyoumeshingwith.us" class="btn btn-secondary" target="_blank" rel="noopener">View the Mesh Map</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======== WHAT IS MESHTASTIC ======== -->
+  <section class="section section-alt" id="about">
+    <div class="section-inner">
+      <div class="section-label reveal">What is this?</div>
+      <h2 class="section-title reveal">Long-range radio, no license required</h2>
+      <p class="section-desc reveal">
+        Meshtastic turns inexpensive LoRa radios into a mesh network that relays messages
+        node-to-node — even when the internet and cell service are down.
+      </p>
+
+      <div class="explainer-grid">
+        <div class="explainer-card reveal">
+          <div class="explainer-icon green">📡</div>
+          <h3>Off-Grid Messaging</h3>
+          <p>
+            Send text messages, GPS coordinates, and telemetry over radio. Each node
+            automatically relays for others, extending range across miles of Florida terrain.
+          </p>
+        </div>
+        <div class="explainer-card reveal">
+          <div class="explainer-icon amber">⚡</div>
+          <h3>No Infrastructure Needed</h3>
+          <p>
+            Works without cell towers, Wi-Fi, or internet. Solar-powered nodes can run
+            indefinitely. When a hurricane takes down comms, mesh stays up.
+          </p>
+        </div>
+        <div class="explainer-card reveal">
+          <div class="explainer-icon blue">🤝</div>
+          <h3>Community First</h3>
+          <p>
+            An open, volunteer-run network. No subscriptions, no data collection.
+            Neighbors helping neighbors build resilient communication across Florida.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======== GET STARTED ======== -->
+  <section class="section" id="get-started">
+    <div class="section-inner">
+      <div class="section-label reveal">Get on the mesh</div>
+      <h2 class="section-title reveal">Three steps to your first message</h2>
+      <p class="section-desc reveal">
+        Getting started takes about 15 minutes and one affordable radio.
+      </p>
+
+      <div class="steps">
+        <div class="step reveal">
+          <h3>Get a Radio</h3>
+          <p>
+            Pick up a Meshtastic-compatible device — a Heltec V3, RAK WisBlock,
+            or LilyGo T-Beam are popular choices. Most run $25–$60. Check the
+            <a href="https://meshtastic.org/docs/hardware/" target="_blank" rel="noopener">official hardware list</a>.
+          </p>
+        </div>
+        <div class="step reveal">
+          <h3>Flash &amp; Configure</h3>
+          <p>
+            Install the Meshtastic firmware, connect via the
+            <a href="https://meshtastic.org/docs/software/" target="_blank" rel="noopener">phone app or web client</a>,
+            and apply the
+            <a href="https://areyoumeshingwith.us/docs/meshtastic-docs/configuration/">Florida Mesh recommended settings</a>
+            so your node plays well with the network.
+          </p>
+        </div>
+        <div class="step reveal">
+          <h3>Get On the Air</h3>
+          <p>
+            Enable <strong>"OK to MQTT"</strong> in your LoRa settings to appear on the
+            <a href="https://map.areyoumeshingwith.us" target="_blank" rel="noopener">Florida Mesh Map</a>
+            and contribute telemetry. Then say hello on LongFast — you're part of the mesh.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======== COMMUNITY BUILDS ======== -->
+  <section class="section section-alt" id="builds">
+    <div class="section-inner">
+      <div class="section-label reveal">Show us your setup</div>
+      <h2 class="section-title reveal">Community Builds</h2>
+      <p class="section-desc reveal">
+        From rooftop solar repeaters to 3D-printed enclosures and mobile go-kits —
+        see how Florida meshers are building their nodes.
+      </p>
+
+      <!-- JS populates this from builds.json. Static fallback below for no-JS. -->
+      <div class="builds-grid" id="builds-grid">
+        <noscript>
+          <div class="build-card">
+            <div class="build-image">
+              <div class="placeholder-inner">
+                <div class="placeholder-icon">📡</div>
+                Builds load with JS
+              </div>
+            </div>
+            <div class="build-info">
+              <h3>Enable JavaScript</h3>
+              <p>Community builds are loaded dynamically. Enable JS or visit our Discord to see them.</p>
+            </div>
+          </div>
+        </noscript>
+      </div>
+
+      <div class="builds-cta reveal">
+        <a href="https://discord.com/invite/floridamesh" class="btn btn-secondary" target="_blank" rel="noopener">
+          Share Your Build on Discord
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======== NETWORK TOOLS ======== -->
+  <section class="section" id="tools">
+    <div class="section-inner">
+      <div class="section-label reveal">Network tools</div>
+      <h2 class="section-title reveal">See the mesh in action</h2>
+      <p class="section-desc reveal">
+        Real-time visibility into the Florida mesh — who's online, where they are,
+        and how the network is performing.
+      </p>
+
+      <div class="tools-grid">
+        <a href="https://map.areyoumeshingwith.us" class="tool-card reveal" target="_blank" rel="noopener">
+          <h3>🗺️ Florida Mesh Map</h3>
+          <p>
+            Interactive map of active nodes across the state. See coverage areas,
+            find nearby meshers, and identify gaps where new nodes would help.
+          </p>
+          <span class="tool-link">map.areyoumeshingwith.us</span>
+        </a>
+
+        <a href="https://malla.areyoumeshingwith.us" class="tool-card reveal" target="_blank" rel="noopener">
+          <h3>📊 Mesh Telemetry</h3>
+          <p>
+            Powered by Malla — live network stats, signal analysis, packet browser,
+            multi-hop visualizations, and 7-day activity trends.
+          </p>
+          <span class="tool-link">malla.areyoumeshingwith.us</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======== RESOURCES ======== -->
+  <section class="section section-alt" id="resources">
+    <div class="section-inner">
+      <div class="section-label reveal">Resources</div>
+      <h2 class="section-title reveal">Learn, configure, contribute</h2>
+      <p class="section-desc reveal">
+        Everything you need to get the most out of Florida Mesh.
+      </p>
+
+      <div class="resources-grid">
+        <a href="https://areyoumeshingwith.us/docs/meshtastic-docs/configuration/" class="resource-item reveal">
+          <div class="resource-icon">⚙️</div>
+          <div class="resource-text">
+            <h4>Node Configuration</h4>
+            <p>Recommended settings for the Florida mesh</p>
+          </div>
+        </a>
+
+        <a href="https://areyoumeshingwith.us/docs/meshtastic-docs/regional-lora-settings/" class="resource-item reveal">
+          <div class="resource-icon">📻</div>
+          <div class="resource-text">
+            <h4>Regional LoRa Settings</h4>
+            <p>Frequency presets by Florida region</p>
+          </div>
+        </a>
+
+        <a href="https://areyoumeshingwith.us/docs/introduction/" class="resource-item reveal">
+          <div class="resource-icon">📖</div>
+          <div class="resource-text">
+            <h4>Introduction</h4>
+            <p>What Florida Mesh is all about</p>
+          </div>
+        </a>
+
+        <a href="https://meshtastic.org/docs/introduction/" class="resource-item reveal" target="_blank" rel="noopener">
+          <div class="resource-icon">🌐</div>
+          <div class="resource-text">
+            <h4>Meshtastic Docs</h4>
+            <p>Official project documentation</p>
+          </div>
+        </a>
+
+        <a href="https://discord.com/invite/floridamesh" class="resource-item reveal" target="_blank" rel="noopener">
+          <div class="resource-icon">💬</div>
+          <div class="resource-text">
+            <h4>Discord</h4>
+            <p>Join the community conversation</p>
+          </div>
+        </a>
+
+        <a href="https://github.com/flmesh" class="resource-item reveal" target="_blank" rel="noopener">
+          <div class="resource-icon">🔧</div>
+          <div class="resource-text">
+            <h4>GitHub</h4>
+            <p>Source code and contributions</p>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======== CTA BANNER ======== -->
+  <section class="cta-banner">
+    <h2 class="reveal">Ready to join the mesh?</h2>
+    <p class="reveal">Pick up a radio, flash the firmware, and say hello. We're listening.</p>
+    <div class="hero-actions reveal">
+      <a href="https://meshtastic.org/docs/hardware/" class="btn btn-primary" target="_blank" rel="noopener">Browse Hardware</a>
+      <a href="https://discord.com/invite/floridamesh" class="btn btn-secondary" target="_blank" rel="noopener">Join the Discord</a>
+    </div>
+  </section>
+
+  <!-- ======== FOOTER ======== -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-left">
+        © 2024–2026 Florida Mesh User Community ·
+        <a href="https://github.com/flmesh/areyoumeshingwith.us/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a>
+      </div>
+      <div class="footer-socials">
+        <a href="https://discord.com/invite/floridamesh" target="_blank" rel="noopener">Discord</a>
+        <a href="https://github.com/flmesh" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://areyoumeshingwith.us/index.xml">RSS</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="site.js"></script>
+</body>
+</html>
