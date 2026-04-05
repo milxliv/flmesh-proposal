@@ -9,6 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="lib/leaflet.css">
   <link rel="icon" href="images/logo-sm.png" type="image/png">
 </head>
 <body>
@@ -33,10 +34,21 @@
         <li><a href="#builds">Builds</a></li>
         <li><a href="https://map.areyoumeshingwith.us" target="_blank" rel="noopener">Map</a></li>
         <li><a href="https://malla.areyoumeshingwith.us" target="_blank" rel="noopener">Telemetry</a></li>
+        <li><a href="https://skywatch.areyoumeshingwith.us" target="_blank" rel="noopener">SkyWatch</a></li>
         <li><a href="#get-started" class="nav-cta">Get Started</a></li>
       </ul>
     </div>
   </nav>
+
+  <!-- ======== NWS ALERT BANNER ======== -->
+  <div class="alert-banner" id="alert-banner" hidden>
+    <div class="alert-banner-inner">
+      <span class="alert-banner-icon">&#9888;</span>
+      <span class="alert-banner-text" id="alert-banner-text"></span>
+      <a href="https://skywatch.areyoumeshingwith.us" class="alert-banner-link" target="_blank" rel="noopener">View on SkyWatch &rarr;</a>
+      <button class="alert-banner-close" id="alert-banner-close" aria-label="Dismiss">&times;</button>
+    </div>
+  </div>
 
   <!-- ======== HERO ======== -->
   <section class="hero" id="home">
@@ -181,6 +193,30 @@
         and how the network is performing.
       </p>
 
+      <!-- Live mesh stats strip -->
+      <div class="mesh-stats-strip reveal" id="mesh-stats">
+        <div class="mesh-stat">
+          <span class="mesh-stat-number" id="stat-online">—</span>
+          <span class="mesh-stat-label">Nodes Online</span>
+        </div>
+        <div class="mesh-stat">
+          <span class="mesh-stat-number" id="stat-total">—</span>
+          <span class="mesh-stat-label">Total Nodes</span>
+        </div>
+        <div class="mesh-stat">
+          <span class="mesh-stat-number" id="stat-alerts">—</span>
+          <span class="mesh-stat-label">Active NWS Alerts</span>
+        </div>
+      </div>
+
+      <!-- Embedded mini-map -->
+      <div class="mini-map-container reveal">
+        <div id="mini-map"></div>
+        <div class="mini-map-overlay">
+          <a href="https://map.areyoumeshingwith.us" class="btn btn-secondary btn-sm" target="_blank" rel="noopener">Open Full Map</a>
+        </div>
+      </div>
+
       <div class="tools-grid">
         <a href="https://map.areyoumeshingwith.us" class="tool-card reveal" target="_blank" rel="noopener">
           <h3>🗺️ Florida Mesh Map</h3>
@@ -198,6 +234,15 @@
             multi-hop visualizations, and 7-day activity trends.
           </p>
           <span class="tool-link">malla.areyoumeshingwith.us</span>
+        </a>
+
+        <a href="https://skywatch.areyoumeshingwith.us" class="tool-card reveal" target="_blank" rel="noopener">
+          <h3>⚡ SkyWatch</h3>
+          <p>
+            Situational awareness dashboard — live NWS alerts, mesh node status,
+            and weather events overlaid on an interactive map of Florida.
+          </p>
+          <span class="tool-link">skywatch.areyoumeshingwith.us</span>
         </a>
       </div>
     </div>
@@ -289,6 +334,7 @@
     </div>
   </footer>
 
+  <script src="lib/leaflet.js"></script>
   <script src="site.js"></script>
 </body>
 </html>
