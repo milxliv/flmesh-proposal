@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Florida Mesh live node map with weather alerts, earthquake data, and mesh network topology.">
+    <title>Florida Mesh — Live Map</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="lib/leaflet.css">
+    <link rel="icon" href="images/logo-sm.png" type="image/png">
+    <style>
+        :root {
+            --bg: #0a0e14;
+            --bg-card: #151d28;
+            --border: #1e2a3a;
+            --text: #e0e6ed;
+            --text-sec: #8899aa;
+            --text-muted: #556677;
+            --green: #00e676;
+            --green-dim: #00c853;
+            --amber: #ffc107;
+            --red: #dc2626;
+            --blue: #29b6f6;
+            --font-display: 'Outfit', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: var(--font-display);
+            background: var(--bg);
+            color: var(--text);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Nav bar — matches proposal site */
+        .map-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 1.5rem;
+            height: 56px;
+            background: rgba(10, 14, 20, 0.95);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+            z-index: 1000;
+        }
+        .map-nav-left { display: flex; align-items: center; gap: 1rem; }
+        .map-nav-brand {
+            display: flex; align-items: center; gap: 0.5rem;
+            color: var(--text); text-decoration: none;
+            font-weight: 800; font-size: 1rem;
+        }
+        .map-nav-brand img { width: 28px; height: 28px; }
+        .map-nav-brand span { color: var(--green); }
+        .map-nav-links { display: flex; gap: 0.25rem; }
+        .map-nav-links a {
+            padding: 0.4rem 0.75rem; font-size: 0.82rem;
+            color: var(--text-sec); text-decoration: none;
+            border-radius: 6px; transition: color 0.15s, background 0.15s;
+        }
+        .map-nav-links a:hover { color: var(--text); background: rgba(255,255,255,0.04); }
+        .map-nav-links a.active { color: var(--green); background: rgba(0,230,118,0.08); }
+        .map-nav-right {
+            display: flex; align-items: center; gap: 1.25rem;
+            font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-muted);
+        }
+        .live-stat { display: flex; align-items: center; gap: 0.35rem; }
+        .dot {
+            width: 7px; height: 7px; border-radius: 50%; display: inline-block;
+        }
+        .dot-green { background: var(--green); }
+        .dot-amber { background: var(--amber); }
+
+        /* Map */
+        #fullmap { flex: 1; background: var(--bg); }
+
+        /* Dark tiles */
+        .leaflet-tile-pane { filter: brightness(0.65) contrast(1.1) saturate(0.25); }
+        .leaflet-popup-content-wrapper {
+            background: var(--bg-card); color: var(--text);
+            border-radius: 8px; box-shadow: 0 4px 24px rgba(0,0,0,0.6);
+            max-width: 320px;
+        }
+        .leaflet-popup-content {
+            font-size: 0.78rem; line-height: 1.5;
+            font-family: var(--font-display); margin: 10px 12px;
+        }
+        .leaflet-popup-tip { background: var(--bg-card); }
+
+        /* Popup node details */
+        .np-header { margin-bottom: 6px; }
+        .np-name { font-size: 0.9rem; font-weight: 600; }
+        .np-id { font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-muted); }
+        .np-status {
+            display: inline-flex; align-items: center; gap: 4px;
+            font-size: 0.7rem; font-weight: 600; text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .np-grid {
+            display: grid; grid-template-columns: 1fr 1fr;
+            gap: 2px 12px; margin: 6px 0; font-size: 0.72rem;
+        }
+        .np-grid dt { color: var(--text-muted); }
+        .np-grid dd { color: var(--text); font-family: var(--font-mono); font-size: 0.7rem; }
+        .np-section {
+            margin-top: 6px; padding-top: 5px;
+            border-top: 1px solid var(--border); font-size: 0.7rem;
+        }
+        .np-section-title {
+            font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.08em;
+            color: var(--text-muted); margin-bottom: 3px;
+        }
+        .np-neighbour {
+            display: flex; justify-content: space-between;
+            padding: 1px 0; font-family: var(--font-mono); font-size: 0.68rem;
+        }
+        .np-neighbour-snr { color: var(--green); }
+        .np-env { color: var(--text-sec); }
+
+        /* Controls */
+        .leaflet-control-layers {
+            background: var(--bg-card); color: var(--text);
+            border: 1px solid var(--border); border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            font-family: var(--font-display); font-size: 0.8rem;
+        }
+        .leaflet-control-layers label { color: var(--text); }
+        .leaflet-control-zoom a {
+            background: var(--bg-card); color: var(--text); border-color: var(--border);
+        }
+        .leaflet-control-zoom a:hover { background: rgba(255,255,255,0.08); }
+
+        @media (max-width: 600px) {
+            .map-nav { padding: 0 1rem; height: 48px; }
+            .map-nav-right .live-stat-label { display: none; }
+            .map-nav-brand { font-size: 0.9rem; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="map-nav">
+        <div class="map-nav-left">
+            <a href="/" class="map-nav-brand">
+                <img src="images/logo-sm.png" alt="FL Mesh" width="28" height="28">
+                Florida <span>Mesh</span>
+            </a>
+            <div class="map-nav-links">
+                <a href="/">Home</a>
+                <a href="map.html" class="active">Map</a>
+            </div>
+        </div>
+        <div class="map-nav-right">
+            <span class="live-stat">
+                <span class="dot dot-green"></span>
+                <span id="stat-nodes">—</span>
+                <span class="live-stat-label">nodes</span>
+            </span>
+            <span class="live-stat">
+                <span class="dot dot-amber"></span>
+                <span id="stat-alerts">—</span>
+                <span class="live-stat-label">alerts</span>
+            </span>
+            <span id="last-update"></span>
+        </div>
+    </nav>
+
+    <div id="fullmap"></div>
+
+    <script src="lib/leaflet.js"></script>
+    <script>
+    (function() {
+        var API = 'https://skywatch.hsca-capecoral.com';
+
+        var map = L.map('fullmap', {
+            center: [27.8, -82.5],
+            zoom: 7,
+            zoomControl: true,
+        });
+
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 18,
+            attribution: '&copy; OpenStreetMap'
+        }).addTo(map);
+
+        var meshLayer = L.layerGroup().addTo(map);
+        var pathLayer = L.layerGroup().addTo(map);
+        var alertLayer = L.layerGroup().addTo(map);
+        var quakeLayer = L.layerGroup().addTo(map);
+
+        L.control.layers(null, {
+            'Mesh Nodes': meshLayer,
+            'Neighbour Links': pathLayer,
+            'NWS Alerts': alertLayer,
+            'Earthquakes': quakeLayer,
+        }, { collapsed: false }).addTo(map);
+
+        function esc(s) {
+            if (!s) return '';
+            var d = document.createElement('div');
+            d.textContent = s;
+            return d.innerHTML;
+        }
+
+        function formatUptime(secs) {
+            if (!secs) return null;
+            var d = Math.floor(secs / 86400);
+            var h = Math.floor((secs % 86400) / 3600);
+            if (d > 0) return d + 'd ' + h + 'h';
+            var m = Math.floor((secs % 3600) / 60);
+            return h + 'h ' + m + 'm';
+        }
+
+        function timeAgo(iso) {
+            if (!iso) return null;
+            var ms = Date.now() - new Date(iso).getTime();
+            if (ms < 60000) return '<1m ago';
+            if (ms < 3600000) return Math.floor(ms / 60000) + 'm ago';
+            if (ms < 86400000) return Math.floor(ms / 3600000) + 'h ago';
+            return Math.floor(ms / 86400000) + 'd ago';
+        }
+
+        function batteryStr(val) {
+            if (val === null || val === undefined) return null;
+            if (val > 100) return 'Plugged in';
+            return val + '%';
+        }
+
+        function nodePopup(n) {
+            var color = n.online ? '#00e676' : '#556677';
+            var statusLabel = n.online ? 'ONLINE' : 'OFFLINE';
+
+            var html = '<div class="np-header">';
+            html += '<div class="np-name">' + esc(n.long_name);
+            if (n.short_name) html += ' <span class="np-id">' + esc(n.short_name) + '</span>';
+            html += '</div>';
+            html += '<div class="np-status"><span style="color:' + color + '">&bull;</span> ' + statusLabel;
+            if (n.last_heard) html += ' &middot; ' + timeAgo(n.last_heard);
+            html += '</div>';
+            if (n.node_id_hex) html += '<div class="np-id">' + esc(n.node_id_hex) + '</div>';
+            html += '</div>';
+
+            html += '<dl class="np-grid">';
+            if (n.hardware) { html += '<dt>Hardware</dt><dd>' + esc(n.hardware) + '</dd>'; }
+            if (n.role) { html += '<dt>Role</dt><dd>' + esc(n.role) + '</dd>'; }
+            if (n.firmware) { html += '<dt>Firmware</dt><dd>' + esc(n.firmware) + '</dd>'; }
+            if (n.region) { html += '<dt>Region</dt><dd>' + esc(n.region) + '</dd>'; }
+            if (n.modem_preset) { html += '<dt>Preset</dt><dd>' + esc(n.modem_preset) + '</dd>'; }
+            var batt = batteryStr(n.battery);
+            if (batt) { html += '<dt>Battery</dt><dd>' + batt + '</dd>'; }
+            if (n.voltage) { html += '<dt>Voltage</dt><dd>' + esc(n.voltage) + 'V</dd>'; }
+            var up = formatUptime(n.uptime);
+            if (up) { html += '<dt>Uptime</dt><dd>' + up + '</dd>'; }
+            if (n.altitude !== null && n.altitude !== undefined) {
+                html += '<dt>Altitude</dt><dd>' + Math.round(n.altitude) + 'm</dd>';
+            }
+            if (n.channel_utilization) {
+                html += '<dt>Ch Util</dt><dd>' + parseFloat(n.channel_utilization).toFixed(1) + '%</dd>';
+            }
+            if (n.air_util_tx) {
+                html += '<dt>Air TX</dt><dd>' + parseFloat(n.air_util_tx).toFixed(1) + '%</dd>';
+            }
+            if (n.num_online_local_nodes) {
+                html += '<dt>Local Nodes</dt><dd>' + n.num_online_local_nodes + '</dd>';
+            }
+            if (n.is_licensed) { html += '<dt>Licensed</dt><dd>Yes</dd>'; }
+            html += '</dl>';
+
+            if (n.temperature || n.relative_humidity || n.barometric_pressure) {
+                html += '<div class="np-section"><div class="np-section-title">Environment</div>';
+                var env = [];
+                if (n.temperature) env.push(parseFloat(n.temperature).toFixed(1) + '\u00B0C');
+                if (n.relative_humidity) env.push(parseFloat(n.relative_humidity).toFixed(0) + '% RH');
+                if (n.barometric_pressure) env.push(parseFloat(n.barometric_pressure).toFixed(1) + ' hPa');
+                html += '<span class="np-env">' + env.join(' &middot; ') + '</span>';
+                html += '</div>';
+            }
+
+            if (n.neighbours && n.neighbours.length > 0) {
+                html += '<div class="np-section"><div class="np-section-title">Neighbours (' + n.neighbours.length + ')</div>';
+                n.neighbours.forEach(function(nb) {
+                    var snr = nb.snr !== null && nb.snr !== undefined ? nb.snr.toFixed(1) + ' dB' : '\u2014';
+                    html += '<div class="np-neighbour">';
+                    html += '<span>' + esc(nb.node_id || '?') + '</span>';
+                    html += '<span class="np-neighbour-snr">' + snr + '</span>';
+                    html += '</div>';
+                });
+                html += '</div>';
+            }
+
+            return html;
+        }
+
+        var nodeIndex = {};
+
+        async function refreshMesh() {
+            try {
+                var resp = await fetch(API + '/api/mesh-nodes');
+                var nodes = await resp.json();
+                meshLayer.clearLayers();
+                pathLayer.clearLayers();
+                nodeIndex = {};
+                var online = 0;
+
+                nodes.forEach(function(n) { nodeIndex[n.node_id] = n; });
+
+                nodes.forEach(function(n) {
+                    if (n.online) online++;
+                    var color = n.online ? '#00e676' : '#556677';
+                    var radius = n.online ? 6 : 3;
+
+                    var marker = L.circleMarker([n.lat, n.lng], {
+                        radius: radius,
+                        fillColor: color,
+                        color: '#0a0e14',
+                        weight: 1,
+                        opacity: 0.9,
+                        fillOpacity: 0.8,
+                    });
+
+                    marker.bindPopup(nodePopup(n), { maxWidth: 300 });
+                    meshLayer.addLayer(marker);
+
+                    if (n.neighbours && n.neighbours.length > 0) {
+                        n.neighbours.forEach(function(nb) {
+                            var peer = nodeIndex[nb.node_id];
+                            if (!peer) return;
+                            if (n.node_id > nb.node_id) return;
+
+                            var snr = nb.snr;
+                            var lineColor = snr > 5 ? '#00e676' : snr > 0 ? '#ffc107' : '#ef4444';
+
+                            var line = L.polyline(
+                                [[n.lat, n.lng], [peer.lat, peer.lng]],
+                                { color: lineColor, weight: 1, opacity: 0.35, dashArray: '4 4' }
+                            );
+                            line.bindPopup(
+                                '<strong>Link</strong><br>' +
+                                esc(n.long_name) + ' \u2194 ' + esc(peer.long_name) +
+                                '<br>SNR: ' + (snr !== null && snr !== undefined ? snr.toFixed(1) + ' dB' : '\u2014')
+                            );
+                            pathLayer.addLayer(line);
+                        });
+                    }
+                });
+
+                document.getElementById('stat-nodes').textContent = online + '/' + nodes.length;
+            } catch (err) {
+                console.error('Mesh error:', err);
+            }
+        }
+
+        async function refreshAlerts() {
+            try {
+                var resp = await fetch(API + '/api/map');
+                var events = await resp.json();
+                alertLayer.clearLayers();
+                quakeLayer.clearLayers();
+                var alertCount = 0;
+
+                events.forEach(function(e) {
+                    if (e.source === 'usgs') {
+                        var qm = L.circleMarker([e.lat, e.lng], {
+                            radius: 5,
+                            fillColor: e.color,
+                            color: '#0a0e14',
+                            weight: 1,
+                            opacity: 0.8,
+                            fillOpacity: 0.6,
+                        });
+                        qm.bindPopup(
+                            '<strong>' + esc(e.title) + '</strong><br>' +
+                            '<em>USGS</em> &middot; ' + (e.severity || '').toUpperCase() +
+                            (e.onset ? '<br>' + e.onset : '')
+                        );
+                        quakeLayer.addLayer(qm);
+                    } else {
+                        alertCount++;
+                        var r = e.severity === 'extreme' ? 9 : e.severity === 'severe' ? 7 : 5;
+                        var am = L.circleMarker([e.lat, e.lng], {
+                            radius: r,
+                            fillColor: e.color,
+                            color: '#0a0e14',
+                            weight: 1,
+                            opacity: 0.9,
+                            fillOpacity: 0.7,
+                        });
+                        am.bindPopup(
+                            '<strong>' + esc(e.title) + '</strong><br>' +
+                            '<em>' + (e.source || '').toUpperCase() + '</em> &middot; ' +
+                            (e.severity || '').toUpperCase() + '<br>' +
+                            (e.area || '') +
+                            (e.onset ? '<br>Onset: ' + e.onset : '')
+                        );
+                        alertLayer.addLayer(am);
+                    }
+                });
+
+                document.getElementById('stat-alerts').textContent = alertCount.toString();
+            } catch (err) {
+                console.error('Alert error:', err);
+            }
+        }
+
+        async function refresh() {
+            await Promise.all([refreshMesh(), refreshAlerts()]);
+            document.getElementById('last-update').textContent =
+                new Date().toLocaleTimeString();
+        }
+
+        refresh();
+        setInterval(refresh, 30000);
+    })();
+    </script>
+</body>
+</html>

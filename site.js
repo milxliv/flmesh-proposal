@@ -9,7 +9,7 @@
   // ── SkyWatch API base URL ─────────────────
   // Change this to match where SkyWatch is deployed.
   // Falls back gracefully if SkyWatch is unreachable.
-  var SKYWATCH_API = 'https://skywatch.areyoumeshingwith.us';
+  var SKYWATCH_API = 'https://skywatch.hsca-capecoral.com';
 
   // ── Mobile nav toggle ──────────────────────
   var toggle = document.querySelector('.nav-toggle');
